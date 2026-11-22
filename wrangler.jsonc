@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nigelbass",
+  "compatibility_date": "2026-11-01",
+  // Static site only for now. The contact form Worker adds "main" later.
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  // On until the domain is set up as a custom_domain route.
+  "workers_dev": true
+}

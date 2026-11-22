@@ -5,7 +5,7 @@ Marketing site for Nigel Bass, a plumbing and heating engineer.
 ## The business
 
 - **Who:** Nigel Bass, plumbing and heating engineer, 30+ years' experience.
-- **Registration:** Corgi registered. (Legal gas registration in the UK has been Gas Safe since 2009. Confirm with Nigel which registrations and numbers to show before publishing.)
+- **Registration:** Gas Safe registered. Registration number not known yet; add it once Nigel provides it.
 - **Based:** Enfield, London. **Covers:** all of London.
 - **Domestic work:** standard plumbing and heating jobs for individual clients. Callout charge **£100**.
 - **Larger work:** renovations, office and corporate/commercial projects, quoted per job.
@@ -25,10 +25,12 @@ Marketing site for Nigel Bass, a plumbing and heating engineer.
 Copy the setup from `../atlantic-editorial` unless there's a reason not to, minus what this site doesn't need (EmDash CMS, D1/R2/KV, PostHog, consent banner, Vue/React).
 
 - **Astro**, static output (`build.format: "file"`, no-slash URLs). Fonts via Astro's `fonts` config.
+- **Content:** services and blog posts are Markdown content collections (`src/content.config.ts`, `src/content/{services,blog}/`), rendered by `src/pages/{services,blog}/[slug].astro`.
+- **TypeScript 6**, pinned because `astro check` doesn't support TS 7 yet.
 - **pnpm**, Node 24 (`.nvmrc`).
 - **Biome** for formatting and linting, run with `pnpm exec biome check --write`. Husky + lint-staged pre-commit.
 - **Vitest** for tests, `astro check` for types.
-- **Cloudflare Workers** (free plan): static assets plus a small Worker for the contact form.
+- **Cloudflare Workers** (free plan): `wrangler.jsonc` serves `dist/` as static assets. A small Worker (`main`) will be added for the contact form. `pnpm preview` builds and serves through Wrangler on port 8787.
 - **Contact form** (same pattern as atlantic-editorial's `worker/`): `POST /api/contact` → Turnstile check → Cloudflare rate limiter → email via Resend. Secrets (`TURNSTILE_SECRET`, `RESEND_API_KEY`) are set in Cloudflare, never committed; dev values go in `.dev.vars` (`.dev.vars.example` is committed).
 - **Deploy:** GitHub Actions on push to `main` (check, test, build, `wrangler deploy`), as in atlantic-editorial's `.github/workflows/deploy.yml`.
 
@@ -43,5 +45,6 @@ Copy the setup from `../atlantic-editorial` unless there's a reason not to, minu
 
 - Phone number, email, and domain name.
 - Final list of services.
-- Gas Safe / other registration numbers and any trade memberships to display.
+- Gas Safe registration number, and any trade memberships to display.
+- Domain: `src/lib/site.ts` and `wrangler.jsonc` use a placeholder until it's bought.
 - Who writes blog articles and how often.

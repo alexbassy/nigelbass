@@ -1,0 +1,43 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Nigel Bass • Plumbing & Heating Engineer, Enfield & London",
+  description = "Gas Safe registered plumbing and heating engineer with over 30 years' experience, based in Enfield and covering all of London.",
+} = Astro.props;
+const canonical = new URL(
+  Astro.url.pathname.replace(/(\/index)?(\.html|\/)$/, "") || "/",
+  Astro.site,
+).href;
+---
+
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="canonical" href={canonical} />
+  </head>
+  <body>
+    <header>
+      <nav aria-label="Main">
+        <a href="/">Nigel Bass</a>
+        <a href="/services">Services</a>
+        <a href="/blog">Blog</a>
+        <a href="/contact">Contact</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer>
+      <p>Nigel Bass Plumbing &amp; Heating · Enfield, London · Gas Safe registered</p>
+    </footer>
+  </body>
+</html>

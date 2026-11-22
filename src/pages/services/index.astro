@@ -1,0 +1,22 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+const services = (await getCollection("services")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<Layout title="Services • Nigel Bass Plumbing & Heating">
+  <h1>Services</h1>
+  <ul>
+    {
+      services.map((s) => (
+        <li>
+          <a href={`/services/${s.id}`}>{s.data.title}</a>
+          <p>{s.data.description}</p>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>
