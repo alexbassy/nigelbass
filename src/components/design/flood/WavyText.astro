@@ -1,0 +1,53 @@
+---
+// Letters ride a sine wave. Screen readers get the plain text; the letters are hidden from them.
+interface Props {
+  text: string;
+  offset?: number;
+}
+const { text, offset = 0 } = Astro.props;
+let i = offset;
+const words = text.split(" ").map((w) => [...w].map((ch) => ({ ch, i: i++ })));
+---
+
+<span class="wavy-line">
+  <span class="sr-only">{text}</span>
+  <span aria-hidden="true">
+    {
+      words.map((letters, w) => (
+        <>
+          {w > 0 && " "}
+          <span class="wavy-word">
+            {letters.map(({ ch, i }) => (
+              <span class="wavy-letter" style={`--i:${i}`}>
+                {ch}
+              </span>
+            ))}
+          </span>
+        </>
+      ))
+    }
+  </span>
+</span>
+
+<style>
+  .wavy-line {
+    display: block;
+  }
+  .wavy-word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .wavy-letter {
+    display: inline-block;
+    translate: 0 calc(sin(var(--i) * 0.55rad) * 0.11em);
+    rotate: calc(cos(var(--i) * 0.55rad) * -5deg);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+</style>

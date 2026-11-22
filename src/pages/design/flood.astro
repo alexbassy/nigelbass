@@ -1,0 +1,770 @@
+---
+// Design prototype "Leak & flood": a pipe springs a leak, scrolling floods the page, the CTA closes the valve.
+import WavyText from "../../components/design/flood/WavyText.astro";
+
+const phone = "020 0000 0000";
+const tel = "tel:+442000000000";
+const services = [
+  {
+    slug: "emergency-plumbing",
+    title: "Emergency plumbing",
+    text: "Leaks, burst pipes and blocked drains, stopped and put right.",
+  },
+  {
+    slug: "boilers-and-heating",
+    title: "Boilers and heating",
+    text: "Boiler repairs, servicing and central heating that keeps the whole house warm.",
+  },
+  {
+    slug: "renovations-and-commercial",
+    title: "Renovations and commercial",
+    text: "Bathrooms, kitchens and full refits, plus offices and corporate sites.",
+  },
+];
+const bubbles = [
+  [6, 9, 0, 10],
+  [14, 12, 3, 6],
+  [27, 10, 6, 14],
+  [41, 14, 1, 8],
+  [55, 11, 8, 12],
+  [63, 9, 4, 7],
+  [76, 13, 2, 16],
+  [88, 10, 7, 9],
+];
+---
+
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Nigel Bass • Plumbing & Heating (design: Leak & flood)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,600..800&display=swap"
+    />
+  </head>
+  <body>
+    <!-- The leak: stream and rising water sit behind the content. -->
+    <div class="flood" aria-hidden="true">
+      <div class="stream-wrap">
+        <span class="drip"></span>
+        <span class="stream"></span>
+      </div>
+      <div class="water">
+        <div class="bubbles">
+          {
+            bubbles.map(([x, s, d, t]) => (
+              <span
+                class="bubble"
+                style={`--x:${x}%;--s:${s}px;--d:-${d}s;--t:${t}s`}
+              />
+            ))
+          }
+        </div>
+        <span class="splash"></span>
+        <svg class="duck" aria-hidden="true" viewBox="0 0 80 60" width="72" height="54">
+          <path
+            d="M8 34c0 14 12 20 30 20s32-6 32-18c0-6-4-9-10-9H44c4-4 6-8 6-13 0-8-6-13-14-13S22 6 22 14c0 5 2 9 6 12-10 0-20 1-20 8z"
+            fill="#ffd33d"
+            stroke="#1b1f4b"
+            stroke-width="3"
+            stroke-linejoin="round"></path>
+          <path
+            d="M48 12l12-2-10 7z"
+            fill="#ff6a3d"
+            stroke="#1b1f4b"
+            stroke-width="3"
+            stroke-linejoin="round"></path>
+          <circle cx="38" cy="12" r="2.6" fill="#1b1f4b"></circle>
+          <path
+            d="M30 36c6 6 18 6 24 0"
+            fill="none"
+            stroke="#1b1f4b"
+            stroke-width="3"
+            stroke-linecap="round"></path>
+        </svg>
+      </div>
+    </div>
+
+    <header class="pipe-bar">
+      <div class="pipe" aria-hidden="true">
+        <span class="coupling coupling--left"></span>
+        <span class="coupling coupling--leak"></span>
+      </div>
+      <a class="tag" href={tel}>Call {phone}</a>
+    </header>
+
+    <main>
+      <div class="wrap">
+      <section class="hero">
+        <h1 class="title">
+          <span class="title-name"><WavyText text="Nigel Bass" /></span>
+          <span class="title-trade"
+            ><WavyText text="Plumbing and Heating" offset={4} /></span
+          >
+        </h1>
+        <p class="lede">
+          Gas Safe registered plumbing and heating engineer. Based in Enfield,
+          working across all of London.
+        </p>
+        <p class="actions">
+          <a class="btn btn--ink" href={tel}>Call {phone}</a>
+          <a class="btn btn--plain" href="#services">What Nigel fixes</a>
+        </p>
+      </section>
+
+      <section class="panel intro" aria-labelledby="intro-h">
+        <h2 id="intro-h">Thirty years under London's sinks</h2>
+        <p>
+          Nigel has been a plumbing and heating engineer for more than 30 years.
+          He's based in Enfield and takes jobs anywhere in London, from a
+          dripping tap in Edmonton to a new boiler in Battersea.
+        </p>
+        <dl class="facts">
+          <div>
+            <dt>Home callout</dt>
+            <dd>£100</dd>
+          </div>
+          <div>
+            <dt>Covers</dt>
+            <dd>All of London</dd>
+          </div>
+          <div>
+            <dt>Registered</dt>
+            <dd>Gas Safe</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section id="services" class="services" aria-labelledby="services-h">
+        <h2 id="services-h" class="panel services-h">What Nigel fixes</h2>
+        <ul class="service-list">
+          {
+            services.map((s) => (
+              <li class="panel float">
+                <a href={`/services/${s.slug}`}>
+                  <h3>{s.title}</h3>
+                  <p>{s.text}</p>
+                  <span class="more">Read about {s.title.toLowerCase()}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="panel projects" aria-labelledby="projects-h">
+        <div>
+          <h2 id="projects-h">Bigger jobs, too</h2>
+          <p>
+            Alongside home callouts, Nigel takes on renovations and commercial
+            work: full bathroom and kitchen refits, offices and corporate
+            buildings. Every project is quoted per job, and you deal with Nigel
+            from the first visit to the final test.
+          </p>
+          <a class="btn btn--ink" href="/services/renovations-and-commercial"
+            >Renovations and commercial work</a
+          >
+        </div>
+        <ul class="project-list">
+          <li>Bathroom and kitchen refits</li>
+          <li>Full heating systems for renovations</li>
+          <li>Offices and corporate premises</li>
+          <li>Planned maintenance for landlords and businesses</li>
+        </ul>
+      </section>
+      </div>
+
+      <section class="cta" aria-labelledby="cta-h">
+        <div class="panel cta-panel">
+          <svg class="valve" viewBox="0 0 120 120" aria-hidden="true">
+            <rect x="48" y="60" width="24" height="60" fill="#ffc22e"></rect>
+            <rect
+              x="44"
+              y="58"
+              width="32"
+              height="14"
+              rx="3"
+              fill="#e0961a"
+              stroke="#1b1f4b"
+              stroke-width="3"></rect>
+            <g class="valve-wheel">
+              <circle
+                cx="60"
+                cy="40"
+                r="34"
+                fill="none"
+                stroke="#1b1f4b"
+                stroke-width="16"></circle>
+              <circle
+                cx="60"
+                cy="40"
+                r="34"
+                fill="none"
+                stroke="#ff4d3d"
+                stroke-width="10"></circle>
+              <path
+                d="M60 8v64M28 40h64M37 17l46 46M83 17L37 63"
+                stroke="#1b1f4b"
+                stroke-width="7"
+                stroke-linecap="round"></path>
+              <circle
+                cx="60"
+                cy="40"
+                r="10"
+                fill="#ff4d3d"
+                stroke="#1b1f4b"
+                stroke-width="4"></circle>
+            </g>
+          </svg>
+          <h2 id="cta-h">Sprung a leak? Call&nbsp;Nigel.</h2>
+          <p>
+            He'll turn it off, fix it properly and leave the place dry. Home
+            callouts are £100, anywhere in London.
+          </p>
+          <p class="actions">
+            <a class="btn btn--red" href={tel}>Call {phone}</a>
+            <a class="btn btn--plain" href="/contact">Send Nigel a message</a>
+          </p>
+          <p class="small">
+            Or email <a href="mailto:hello@example.com">hello@example.com</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>
+        Nigel Bass Plumbing and Heating, Enfield, London. Gas Safe registered
+        (registration number to follow).
+      </p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --dry: #eeeafb;
+    --ink: #1b1f4b;
+    --brass: #ffc22e;
+    --brass-dark: #e0961a;
+    --water: #2f6bff;
+    --deep: #1a35a8;
+    --foam: #bfe6ff;
+    --red: #ff4d3d;
+    --paper: #ffffff;
+    --leak-right: clamp(28px, 9vw, 150px);
+    --display: "Bricolage Grotesque", "Arial Narrow", sans-serif;
+    --body: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+    color-scheme: light;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    background: var(--dry);
+    timeline-scope: --fix;
+  }
+  body {
+    margin: 0;
+    background: var(--dry);
+    color: var(--ink);
+    font: 1.0625rem/1.6 var(--body);
+    overflow-x: clip;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--display);
+    font-variation-settings: "wdth" 80;
+    line-height: 1.05;
+    margin: 0 0 0.5em;
+  }
+  h2 {
+    font-size: clamp(1.9rem, 5vw, 3rem);
+    font-weight: 800;
+  }
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  p {
+    margin: 0 0 1em;
+    max-width: 62ch;
+  }
+  a {
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 3px solid var(--red);
+    outline-offset: 3px;
+  }
+
+  /* Pipe across the top: the bit that leaks. */
+  .pipe-bar {
+    position: fixed;
+    inset: 0 0 auto;
+    height: 72px;
+    z-index: 30;
+    pointer-events: none;
+  }
+  .pipe {
+    position: absolute;
+    top: 14px;
+    left: 0;
+    right: 0;
+    height: 26px;
+    background: linear-gradient(
+      var(--brass) 0 30%,
+      #ffe08a 30% 45%,
+      var(--brass) 45% 75%,
+      var(--brass-dark) 75%
+    );
+    border-block: 3px solid var(--ink);
+  }
+  .coupling {
+    position: absolute;
+    top: -10px;
+    width: 30px;
+    height: 40px;
+    background: var(--brass-dark);
+    border: 3px solid var(--ink);
+    border-radius: 6px;
+  }
+  .coupling--left {
+    left: 12%;
+  }
+  .coupling--leak {
+    right: calc(var(--leak-right) - 10px);
+  }
+  .tag {
+    pointer-events: auto;
+    position: absolute;
+    top: 30px;
+    right: calc(var(--leak-right) + 44px);
+    padding: 0.35rem 0.9rem;
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  main {
+    position: relative;
+    z-index: 2;
+    overflow-x: clip;
+  }
+  .wrap {
+    max-width: 66rem;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 92svh;
+    padding: 140px 0 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .title {
+    margin: 0 0 1.5rem;
+    line-height: 0.95;
+  }
+  .title-name {
+    display: block;
+    font-size: clamp(3.6rem, 15vw, 10.5rem);
+    font-weight: 800;
+    font-variation-settings: "wdth" 75;
+    letter-spacing: -0.01em;
+  }
+  .title-trade {
+    display: block;
+    margin-top: 0.35em;
+    font-size: clamp(1.7rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--water);
+  }
+  .lede {
+    font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+    max-width: 34ch;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .btn {
+    display: inline-block;
+    padding: 0.8rem 1.3rem;
+    border: 3px solid var(--ink);
+    border-radius: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+  .btn:hover {
+    translate: 2px 2px;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .btn--ink {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn--red {
+    background: var(--red);
+    color: var(--ink);
+  }
+  .btn--plain {
+    background: var(--paper);
+  }
+
+  /* Opaque panels keep text legible whatever the water is doing behind. */
+  .panel {
+    background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 22px;
+    box-shadow: 8px 8px 0 var(--ink);
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+  }
+  .intro {
+    max-width: 44rem;
+    margin-bottom: 18vh;
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    margin: 1.5rem 0 0;
+  }
+  .facts dt {
+    font-size: 0.9rem;
+  }
+  .facts dd {
+    margin: 0;
+    font: 800 1.6rem/1.1 var(--display);
+    font-variation-settings: "wdth" 80;
+  }
+
+  .services {
+    margin-bottom: 18vh;
+  }
+  .services-h {
+    display: inline-block;
+    margin-bottom: 2rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+  .service-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 2rem;
+    align-items: start;
+  }
+  .float:nth-child(1) {
+    rotate: -1.5deg;
+  }
+  .float:nth-child(2) {
+    rotate: 1deg;
+    margin-top: 3rem;
+  }
+  .float:nth-child(3) {
+    rotate: -0.5deg;
+    margin-top: 1rem;
+  }
+  .float a {
+    display: block;
+    text-decoration: none;
+  }
+  .float:has(a:hover) {
+    background: var(--foam);
+  }
+  .more {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 2rem;
+    margin-bottom: 18vh;
+    background: var(--brass);
+  }
+  .project-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    align-self: center;
+  }
+  .project-list li {
+    padding: 0.7rem 0;
+    border-bottom: 3px solid var(--ink);
+    font-weight: 700;
+  }
+  .project-list li:last-child {
+    border-bottom: 0;
+  }
+
+  .cta {
+    padding: 6vh 16px 22vh;
+    view-timeline: --fix block;
+  }
+  .cta-panel {
+    position: relative;
+    max-width: 46rem;
+    margin: 0 auto;
+    padding-top: 4.5rem;
+  }
+  .cta-panel h2 {
+    font-size: clamp(2.3rem, 7vw, 4.2rem);
+    max-width: 12ch;
+  }
+  .valve {
+    position: absolute;
+    top: -58px;
+    right: clamp(12px, 5vw, 40px);
+    width: clamp(96px, 16vw, 132px);
+  }
+  .valve-wheel {
+    transform-origin: 60px 40px;
+  }
+  .small {
+    font-size: 0.95rem;
+    margin: 1rem 0 0;
+  }
+
+  .foot {
+    position: relative;
+    z-index: 2;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 1.5rem 16px;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+  .foot p {
+    margin: 0 auto;
+  }
+
+  /* Static fallback (no scroll-driven animations, or reduced motion): no flood; the CTA sits in a still pool. */
+  .flood {
+    display: none;
+  }
+  .cta {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24'%3E%3Cpath d='M0 12Q30 0 60 12T120 12V24H0Z' fill='%232f6bff'/%3E%3C/svg%3E")
+        repeat-x 0 0 / 120px 24px,
+      linear-gradient(var(--water), var(--deep)) no-repeat 0 23px / 100% 100%;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .cta {
+        background: none;
+      }
+      .flood {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      /* The leak: a drip, then a stream once scrolling starts; the CTA turns it off. */
+      .stream-wrap {
+        position: absolute;
+        top: 40px;
+        bottom: 0;
+        right: var(--leak-right);
+        width: 10px;
+        transform-origin: bottom;
+        animation: stop-leak linear both;
+        animation-timeline: --fix;
+        animation-range: cover 20% cover 50%;
+      }
+      .stream {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, var(--water), var(--foam) 60%, var(--water));
+        border: 2px solid var(--ink);
+        border-radius: 0 0 6px 6px;
+        transform-origin: top;
+        animation: leak linear both;
+        animation-timeline: scroll(root);
+      }
+      .drip {
+        position: absolute;
+        top: 0;
+        left: -1px;
+        width: 12px;
+        height: 16px;
+        background: var(--water);
+        border: 2px solid var(--ink);
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        animation: drip 1.6s ease-in infinite;
+      }
+
+      .water {
+        position: absolute;
+        inset: 0 0 auto;
+        height: 100lvh;
+        background: linear-gradient(var(--water), var(--deep) 75%);
+        border-top: 3px solid var(--ink);
+        transform: translateY(calc(100% + 60px));
+        animation: rise linear both;
+        animation-timeline: scroll(root);
+      }
+      .water::before,
+      .water::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: calc(100% + 1px);
+        height: 24px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24'%3E%3Cpath d='M0 12Q30 0 60 12T120 12V24H0Z' fill='%232f6bff' stroke='%231b1f4b' stroke-width='3'/%3E%3C/svg%3E")
+          repeat-x 0 0 / 120px 24px;
+        animation: surf 4s linear infinite;
+      }
+      .water::after {
+        opacity: 0.45;
+        bottom: calc(100% + 8px);
+        animation-duration: 7s;
+        animation-direction: reverse;
+        z-index: -1;
+      }
+      .bubbles {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .bubble {
+        position: absolute;
+        bottom: -20px;
+        left: var(--x);
+        width: var(--s);
+        height: var(--s);
+        border: 2px solid var(--foam);
+        border-radius: 50%;
+        animation: bubble var(--t) linear var(--d) infinite;
+      }
+      .duck {
+        position: absolute;
+        top: -46px;
+        left: 9%;
+        animation: bob 2.8s ease-in-out infinite;
+      }
+      .splash {
+        position: absolute;
+        top: -14px;
+        right: calc(var(--leak-right) - 25px);
+        width: 60px;
+        height: 18px;
+        border: 3px solid var(--foam);
+        border-radius: 50%;
+        animation: stop-splash linear both;
+        animation-timeline: --fix;
+        animation-range: cover 20% cover 50%;
+      }
+
+      .valve-wheel {
+        animation: turn linear both;
+        animation-timeline: --fix;
+        animation-range: cover 10% cover 50%;
+      }
+      .float {
+        animation: float 4s ease-in-out infinite;
+      }
+      .float:nth-child(2) {
+        animation-delay: -1.3s;
+      }
+      .float:nth-child(3) {
+        animation-delay: -2.6s;
+      }
+    }
+  }
+
+  @keyframes rise {
+    0%,
+    6% {
+      transform: translateY(calc(100% + 60px));
+    }
+    100% {
+      transform: translateY(18%);
+    }
+  }
+  @keyframes leak {
+    0%,
+    3% {
+      transform: scaleY(0);
+    }
+    12%,
+    100% {
+      transform: scaleY(1);
+    }
+  }
+  @keyframes stop-leak {
+    to {
+      transform: scaleY(0);
+    }
+  }
+  @keyframes stop-splash {
+    to {
+      opacity: 0;
+      scale: 0.3;
+    }
+  }
+  @keyframes drip {
+    0% {
+      translate: 0 0;
+      opacity: 1;
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      translate: 0 110px;
+      opacity: 0;
+    }
+  }
+  @keyframes surf {
+    to {
+      background-position-x: 120px;
+    }
+  }
+  @keyframes bubble {
+    to {
+      translate: 0 -100lvh;
+    }
+  }
+  @keyframes bob {
+    50% {
+      translate: 0 6px;
+      rotate: 4deg;
+    }
+  }
+  @keyframes float {
+    50% {
+      translate: 0 -8px;
+    }
+  }
+  @keyframes turn {
+    to {
+      rotate: 270deg;
+    }
+  }
+</style>

@@ -1,0 +1,357 @@
+---
+// Hero backdrop: a flooded London street. Purely decorative.
+import Tap from "./Tap.astro";
+
+const colours = [
+  "var(--magenta)",
+  "var(--tangerine)",
+  "var(--violet)",
+  "var(--bus)",
+  "var(--sun)",
+];
+const widths = [120, 96, 140, 104, 128, 88, 150, 110, 124, 100, 136, 112, 92];
+let x = -20;
+const houses = widths.map((w, i) => {
+  const h = 120 + ((i * 47) % 90);
+  const house = { x, w, h, fill: colours[i % colours.length], pitched: i % 3 };
+  x += w;
+  return house;
+});
+// Deterministic "random" bubbles so builds are stable.
+const bubbles = Array.from({ length: 16 }, (_, i) => ({
+  left: (i * 37 + 11) % 100,
+  size: 8 + ((i * 13) % 22),
+  delay: -((i * 1.7) % 9),
+  dur: 7 + (i % 5) * 1.5,
+}));
+---
+
+<div class="scene" aria-hidden="true">
+  <div class="rays"></div>
+  <div class="rings"></div>
+
+  <div class="tap-wrap">
+    <Tap state="pour" />
+    <div class="stream"></div>
+  </div>
+
+  {
+    bubbles.map((b) => (
+      <span
+        class="bubble"
+        style={`left:${b.left}%;--s:${b.size}px;animation-delay:${b.delay}s;animation-duration:${b.dur}s`}
+      />
+    ))
+  }
+
+  <svg class="fish fish-1" viewBox="0 0 120 70" aria-hidden="true">
+    <g stroke="var(--ink)" stroke-width="5" stroke-linejoin="round">
+      <path d="M86 35L116 10l-6 25 6 25z" fill="var(--tangerine)"></path>
+      <ellipse cx="50" cy="35" rx="40" ry="23" fill="var(--magenta)"></ellipse>
+      <path d="M46 14q10 21 0 42M62 16q9 19 0 38" fill="none" stroke="var(--sun)"
+      ></path>
+      <circle cx="27" cy="30" r="7" fill="var(--foam)" stroke-width="4"></circle>
+    </g>
+    <circle cx="25" cy="30" r="3" fill="var(--ink)"></circle>
+  </svg>
+  <svg class="fish fish-2" viewBox="0 0 120 70" aria-hidden="true">
+    <g stroke="var(--ink)" stroke-width="5" stroke-linejoin="round">
+      <path d="M86 35L116 10l-6 25 6 25z" fill="var(--magenta)"></path>
+      <ellipse cx="50" cy="35" rx="40" ry="23" fill="var(--sun)"></ellipse>
+      <path d="M46 14q10 21 0 42M62 16q9 19 0 38" fill="none" stroke="var(--tangerine)"
+      ></path>
+      <circle cx="27" cy="30" r="7" fill="var(--foam)" stroke-width="4"></circle>
+    </g>
+    <circle cx="25" cy="30" r="3" fill="var(--ink)"></circle>
+  </svg>
+
+  <svg class="tub" viewBox="0 0 260 200" aria-hidden="true">
+    <g stroke="var(--ink)" stroke-width="6" stroke-linejoin="round">
+      <circle cx="74" cy="164" r="13" fill="var(--sun)"></circle>
+      <circle cx="186" cy="164" r="13" fill="var(--sun)"></circle>
+      <path d="M22 76h216q-4 80-70 84H92q-66-4-70-84z" fill="var(--foam)"></path>
+      <path
+        d="M40 110q22-14 44 0t44 0 44 0 44 0"
+        fill="none"
+        stroke="var(--magenta)"
+        stroke-width="7"></path>
+      <rect x="10" y="64" width="240" height="18" rx="9" fill="var(--foam)"
+      ></rect>
+      <ellipse cx="150" cy="48" rx="30" ry="18" fill="var(--sun)"></ellipse>
+      <circle cx="174" cy="26" r="15" fill="var(--sun)"></circle>
+      <path d="M186 24l18 4-18 7z" fill="var(--tangerine)" stroke-width="4"
+      ></path>
+    </g>
+    <circle cx="176" cy="22" r="3.5" fill="var(--ink)"></circle>
+  </svg>
+
+  <svg class="bus" viewBox="0 0 320 200" aria-hidden="true">
+    <g stroke="var(--ink)" stroke-width="6" stroke-linejoin="round">
+      <rect x="10" y="10" width="300" height="160" rx="24" fill="var(--bus)"
+      ></rect>
+      <rect x="10" y="88" width="300" height="14" fill="var(--sun)"></rect>
+      {
+        [0, 1, 2, 3, 4].map((k) => (
+          <rect
+            x={28 + 56 * k}
+            y="28"
+            width="42"
+            height="44"
+            rx="10"
+            fill="var(--shallow)"
+          />
+        ))
+      }
+      {
+        [0, 1, 2, 3].map((k) => (
+          <rect
+            x={88 + 56 * k}
+            y="112"
+            width="42"
+            height="38"
+            rx="10"
+            fill="var(--shallow)"
+          />
+        ))
+      }
+      <rect x="26" y="110" width="46" height="60" rx="6" fill="var(--tangerine)"
+      ></rect>
+      <circle cx="78" cy="172" r="24" fill="var(--ink)"></circle>
+      <circle cx="248" cy="172" r="24" fill="var(--ink)"></circle>
+    </g>
+    <circle cx="78" cy="172" r="9" fill="var(--foam)"></circle>
+    <circle cx="248" cy="172" r="9" fill="var(--foam)"></circle>
+    <path
+      d="M196 50c6-10 16-10 22 0-6 10-16 10-22 0zm22 0l8-6v12z"
+      fill="var(--tangerine)"
+      stroke="var(--ink)"
+      stroke-width="3"></path>
+  </svg>
+
+  <svg class="street" viewBox="0 0 1440 260" aria-hidden="true" preserveAspectRatio="xMidYMax slice">
+    <g stroke="var(--ink)" stroke-width="6" stroke-linejoin="round">
+      {
+        houses.map((h) => (
+          <g>
+            <rect
+              x={h.x + h.w * 0.6}
+              y={260 - h.h - 54}
+              width="22"
+              height="40"
+              fill="var(--tangerine)"
+            />
+            <rect
+              x={h.x + h.w * 0.6 + 2}
+              y={260 - h.h - 66}
+              width="8"
+              height="14"
+              fill="var(--bus)"
+              stroke-width="4"
+            />
+            <rect
+              x={h.x + h.w * 0.6 + 12}
+              y={260 - h.h - 62}
+              width="8"
+              height="10"
+              fill="var(--bus)"
+              stroke-width="4"
+            />
+            {h.pitched ? (
+              <path
+                d={`M${h.x} ${260 - h.h}L${h.x + h.w / 2} ${260 - h.h - 44}L${h.x + h.w} ${260 - h.h}z`}
+                fill="var(--violet-dark)"
+              />
+            ) : (
+              <path
+                d={`M${h.x} ${260 - h.h}q${h.w / 2}-50 ${h.w} 0z`}
+                fill="var(--violet-dark)"
+              />
+            )}
+            <rect x={h.x} y={260 - h.h} width={h.w} height={h.h + 10} fill={h.fill} />
+            <rect
+              x={h.x + h.w * 0.18}
+              y={260 - h.h + 22}
+              width={h.w * 0.26}
+              height="34"
+              rx="12"
+              fill="var(--shallow)"
+              stroke-width="4"
+            />
+            <rect
+              x={h.x + h.w * 0.56}
+              y={260 - h.h + 22}
+              width={h.w * 0.26}
+              height="34"
+              rx="12"
+              fill="var(--shallow)"
+              stroke-width="4"
+            />
+          </g>
+        ))
+      }
+      <path
+        d="M90 262c-30-60 40-80 10-140s30-70 20-110M1330 262c30-50-40-80-6-130s-20-60 0-90M700 262c-20-40 30-50 10-90"
+        fill="none"
+        stroke="var(--lime)"
+        stroke-width="16"
+        stroke-linecap="round"></path>
+    </g>
+  </svg>
+</div>
+
+<style>
+  .scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .rays {
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(
+      from 160deg at 50% -10%,
+      rgb(255 255 255 / 0.09) 0deg 6deg,
+      transparent 6deg 14deg
+    );
+    mask-image: linear-gradient(#000, transparent 75%);
+  }
+  .rings {
+    position: absolute;
+    left: 50%;
+    top: 34%;
+    width: min(120vw, 1100px);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    background: repeating-radial-gradient(
+      circle,
+      rgb(255 212 59 / 0.22) 0 26px,
+      transparent 26px 52px
+    );
+    mask-image: radial-gradient(circle, #000 20%, transparent 65%);
+  }
+  .tap-wrap {
+    position: absolute;
+    left: -12px;
+    top: 1.25rem;
+    width: clamp(96px, 14vw, 200px);
+    isolation: isolate;
+  }
+  .stream {
+    position: absolute;
+    left: 75%;
+    top: 60%;
+    width: 18%;
+    height: 100vh;
+    translate: -50% 0;
+    border: 5px solid var(--ink);
+    border-top: 0;
+    border-radius: 0 0 40% 40%;
+    background: repeating-linear-gradient(
+      170deg,
+      var(--foam) 0 14px,
+      var(--shallow) 14px 28px
+    );
+    background-size: 100% 56px;
+    animation: pour 0.8s linear infinite;
+    mask-image: linear-gradient(#000 40%, transparent);
+    z-index: -1;
+  }
+  @keyframes pour {
+    to {
+      background-position: 0 56px;
+    }
+  }
+  .bubble {
+    position: absolute;
+    bottom: -40px;
+    width: var(--s);
+    height: var(--s);
+    border: 3px solid var(--foam);
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff8 0 25%, transparent 30%);
+    animation: rise 9s linear infinite;
+  }
+  @keyframes rise {
+    to {
+      transform: translate(20px, -110vh);
+    }
+  }
+  .fish {
+    position: absolute;
+    width: clamp(64px, 8vw, 120px);
+    animation: swim 6s ease-in-out infinite alternate;
+  }
+  .fish-1 {
+    left: 14%;
+    top: 58%;
+  }
+  .fish-2 {
+    right: 8%;
+    top: 16%;
+    width: clamp(48px, 5vw, 80px);
+    animation-delay: -3s;
+  }
+  @keyframes swim {
+    to {
+      transform: translate(-30px, 12px) rotate(-4deg);
+    }
+  }
+  .tub {
+    position: absolute;
+    right: 5%;
+    bottom: 26%;
+    width: clamp(120px, 17vw, 250px);
+    rotate: 9deg;
+    animation: float 5s ease-in-out infinite alternate;
+  }
+  .bus {
+    position: absolute;
+    left: 5%;
+    bottom: 22%;
+    width: clamp(150px, 22vw, 330px);
+    rotate: -10deg;
+    animation: float 7s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes float {
+    to {
+      transform: translateY(-16px) rotate(3deg);
+    }
+  }
+  .street {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: clamp(150px, 26vh, 260px);
+  }
+  @media (max-width: 700px) {
+    .fish-1 {
+      display: none;
+    }
+    .fish-2 {
+      top: 4.5rem;
+    }
+    .tub {
+      bottom: 18%;
+      right: 4%;
+    }
+    .bus {
+      bottom: 15%;
+      left: 2%;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .stream,
+    .bubble,
+    .fish,
+    .tub,
+    .bus {
+      animation: none;
+    }
+    .bubble {
+      bottom: auto;
+      top: calc(20% + var(--s) * 2);
+    }
+  }
+</style>

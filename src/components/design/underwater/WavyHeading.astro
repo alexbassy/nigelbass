@@ -1,0 +1,83 @@
+---
+// Letters ride a sine wave. Screen readers get the plain text; the letters are hidden.
+interface Props {
+  lines: string[];
+}
+const { lines } = Astro.props;
+let n = 0;
+const letters = lines.map((line) =>
+  [...line].map((ch) => {
+    const i = n++;
+    return {
+      ch,
+      style: `--y:${(Math.sin(i * 0.62) * 0.14).toFixed(3)};--r:${(Math.cos(i * 0.62) * 7).toFixed(1)}deg;--i:${i}`,
+    };
+  })
+);
+---
+
+<h1 class="wavy">
+  <span class="sr">{lines.join(" ")}</span>
+  {
+    letters.map((line, li) => (
+      <span class:list={["line", `line-${li + 1}`]} aria-hidden="true">
+        {line.map(({ ch, style }) =>
+          ch === " " ? (
+            <span class="sp" />
+          ) : (
+            <span class="ch" style={style}>
+              {ch}
+            </span>
+          )
+        )}
+      </span>
+    ))
+  }
+</h1>
+
+<style>
+  .wavy {
+    margin: 0;
+    font-family: "Shrikhand", "Cooper Black", serif;
+    font-weight: 400;
+    line-height: 1.05;
+    text-align: center;
+    color: var(--sun);
+  }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .line {
+    display: block;
+    white-space: nowrap;
+  }
+  .line-1 {
+    font-size: clamp(3.1rem, 13.5vw, 9rem);
+  }
+  .line-2 {
+    font-size: clamp(1.45rem, 6.4vw, 4.1rem);
+    color: var(--foam);
+    margin-top: 0.35em;
+  }
+  .ch {
+    display: inline-block;
+    translate: 0 calc(var(--y) * 1em);
+    rotate: var(--r);
+    -webkit-text-stroke: 0.09em var(--ink);
+    paint-order: stroke fill;
+    text-shadow: 0.06em 0.07em 0 var(--magenta);
+  }
+  .line-2 .ch {
+    -webkit-text-stroke-width: 0.12em;
+    text-shadow: 0.07em 0.08em 0 var(--ink);
+  }
+  .sp {
+    display: inline-block;
+    width: 0.32em;
+  }
+</style>

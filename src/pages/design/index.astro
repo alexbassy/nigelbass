@@ -1,0 +1,24 @@
+---
+// Design prototypes for comparison. Delete this folder once a direction is chosen.
+const concepts = [
+  ["pipes", "Pipes & valves: water and heat flowing through pipework"],
+  ["pipe-map", "Pipe map: single-screen schematic, tube-map style"],
+  ["underwater", "Underwater world: 60s pop-art flood, the plumber to the rescue"],
+  ["flood", "Hybrid: pipework that springs a leak and floods the page"],
+];
+---
+
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Design concepts • Nigel Bass</title>
+  </head>
+  <body style="font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem">
+    <h1>Design concepts</h1>
+    <ul>
+      {concepts.map(([slug, label]) => <li><a href={`/design/${slug}`}>{label}</a></li>)}
+    </ul>
+  </body>
+</html>

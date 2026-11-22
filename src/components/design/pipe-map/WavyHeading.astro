@@ -1,0 +1,54 @@
+---
+// Static wavy lettering: each letter sits on a fixed sine wave. Size comes from the parent's font-size.
+const lines = ["Nigel Bass", "Plumbing and Heating"];
+---
+
+<h1 class="wavy" aria-label={lines.join(", ")}>
+  {
+    lines.map((line, l) => (
+      <span class={`wavy-line wavy-line-${l + 1}`} aria-hidden="true">
+        {[...line].map((ch, i) => {
+          const phase = i * 0.55 + l * 1.3;
+          const style = `--y:${(Math.sin(phase) * 0.09).toFixed(3)}em;--r:${(Math.cos(phase) * -4).toFixed(1)}deg`;
+          return ch === " " ? (
+            <span class="wavy-space" />
+          ) : (
+            <span class="wavy-ch" style={style}>
+              {ch}
+            </span>
+          );
+        })}
+      </span>
+    ))
+  }
+</h1>
+
+<style>
+  .wavy {
+    margin: 0;
+    font-family: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+  }
+  .wavy-line {
+    display: block;
+    white-space: nowrap;
+  }
+  .wavy-line-1 {
+    color: var(--ink);
+  }
+  .wavy-line-2 {
+    margin-top: 0.2em;
+    font-size: 0.47em;
+    color: var(--heat-text);
+  }
+  .wavy-ch {
+    display: inline-block;
+    transform: translateY(var(--y)) rotate(var(--r));
+  }
+  .wavy-space {
+    display: inline-block;
+    width: 0.28em;
+  }
+</style>

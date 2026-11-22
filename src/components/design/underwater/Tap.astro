@@ -1,0 +1,124 @@
+---
+// The leaking tap. `pour` floods the hero; `drip` is fixed by a spanner once the page script adds `is-fixed`.
+interface Props {
+  state: "pour" | "drip";
+  class?: string;
+  id?: string;
+}
+const { state, class: className, id } = Astro.props;
+---
+
+<svg
+  id={id}
+  class:list={["tap", `is-${state}`, className]}
+  viewBox="0 0 220 240"
+  aria-hidden="true"
+>
+  <g stroke="var(--ink)" stroke-width="6" stroke-linejoin="round">
+    <rect x="-20" y="48" width="132" height="34" fill="var(--tangerine)"></rect>
+    <rect x="94" y="40" width="20" height="50" rx="4" fill="var(--sun)"></rect>
+    <rect x="148" y="88" width="34" height="48" rx="8" fill="var(--magenta)"
+    ></rect>
+    <rect x="112" y="36" width="70" height="58" rx="16" fill="var(--magenta)"
+    ></rect>
+    <rect x="140" y="128" width="50" height="16" rx="7" fill="var(--sun)"></rect>
+    <g class="handle">
+      <rect x="139" y="14" width="12" height="24" fill="var(--foam)"></rect>
+      <rect x="110" y="4" width="70" height="17" rx="8.5" fill="var(--sun)"
+      ></rect>
+      <circle cx="145" cy="12.5" r="8" fill="var(--foam)"></circle>
+    </g>
+    <path
+      class="drop"
+      d="M165 150c7 12 12 18 12 25a12 12 0 0 1-24 0c0-7 5-13 12-25z"
+      fill="var(--foam)"
+      stroke-width="4"></path>
+    <g class="spanner">
+      <rect
+        x="-8"
+        y="10"
+        width="16"
+        height="110"
+        rx="8"
+        fill="var(--lime)"
+        stroke-width="5"></rect>
+      <circle r="22" fill="var(--lime)" stroke-width="5"></circle>
+      <rect
+        x="-8"
+        y="-26"
+        width="16"
+        height="24"
+        fill="var(--ink)"
+        stroke-width="0"></rect>
+    </g>
+  </g>
+  <g class="sparkle" fill="var(--sun)" stroke="var(--ink)" stroke-width="4">
+    <path d="M200 160l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"></path>
+    <path d="M128 168l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"></path>
+  </g>
+</svg>
+
+<style>
+  .tap {
+    overflow: visible;
+    display: block;
+  }
+  .drop,
+  .spanner,
+  .sparkle {
+    opacity: 0;
+  }
+  .spanner {
+    transform: translate(104px, 65px) rotate(-70deg);
+    transition:
+      transform 0.7s cubic-bezier(0.3, 1.6, 0.5, 1),
+      opacity 0.3s;
+  }
+  .handle {
+    transform-origin: 145px 20px;
+    transition: transform 0.7s ease-out 0.4s;
+  }
+  .is-drip .drop {
+    opacity: 1;
+    animation: drip 1.6s cubic-bezier(0.55, 0, 1, 0.45) infinite;
+  }
+  .is-fixed .drop {
+    opacity: 0;
+    animation: none;
+  }
+  .is-fixed .spanner {
+    opacity: 1;
+    transform: translate(104px, 65px) rotate(28deg);
+  }
+  .is-fixed .handle {
+    transform: rotate(90deg) scaleX(0.4);
+  }
+  .is-fixed .sparkle {
+    opacity: 1;
+    transition: opacity 0.3s 0.9s;
+  }
+  @keyframes drip {
+    0%,
+    30% {
+      transform: translateY(0) scale(0.4);
+      transform-origin: 165px 150px;
+    }
+    45% {
+      transform: translateY(0) scale(1);
+    }
+    100% {
+      transform: translateY(90px) scale(1);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .is-drip .drop {
+      animation: none;
+    }
+    .spanner,
+    .handle,
+    .is-fixed .sparkle {
+      transition: none;
+    }
+  }
+</style>

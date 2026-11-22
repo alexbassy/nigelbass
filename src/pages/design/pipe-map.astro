@@ -1,0 +1,605 @@
+---
+// Design prototype: "Pipe map". One-screen schematic; pipes are the lines, fittings are the stations.
+import WavyHeading from "../../components/design/pipe-map/WavyHeading.astro";
+
+type Pt = [number, number];
+type Side = "n" | "s" | "e" | "w" | "ne" | "se" | "nw" | "sw";
+
+// Landscape map is drawn on a 160×100 grid, portrait on a 100-wide grid.
+const D = { y0: 0, w: 160, h: 100 };
+// Portrait viewBox is cropped to the drawn area, from y = 43.
+const M = { y0: 43, w: 100, h: 140 };
+
+// `d` = landscape points, `m` = portrait points. Runs are horizontal, vertical or 45°.
+const lines: { id: string; name: string; d: Pt[]; m: Pt[] }[] = [
+  {
+    id: "heat",
+    name: "Heating",
+    d: [[78, 24], [132, 24], [148, 40], [148, 64], [140, 72], [60, 72]],
+    m: [[44, 48], [44, 134], [56, 146], [56, 164], [50, 170], [50, 176]],
+  },
+  {
+    id: "cold",
+    name: "Cold water",
+    d: [[146, 8], [146, 14], [126, 34], [94, 34], [80, 48], [80, 64], [92, 76], [142, 76]],
+    m: [[70, 50], [70, 64], [56, 78], [56, 128], [62, 134], [62, 176]],
+  },
+  {
+    id: "gas",
+    name: "Gas",
+    d: [[88, 12], [98, 12], [104, 18], [104, 72]],
+    m: [[38, 48], [38, 72], [50, 84], [50, 146]],
+  },
+  {
+    id: "waste",
+    name: "Waste",
+    d: [[80, 48], [70, 48], [60, 58], [60, 90], [124, 90]],
+    m: [[62, 86], [62, 90], [38, 114], [38, 160]],
+  },
+];
+
+interface Station {
+  label: string;
+  sub?: string;
+  href?: string;
+  d: Pt[];
+  m: Pt[];
+  side: Side;
+  mside: Side;
+  // Minor stops: a tick in the line's colour, pointing `dir` (or both ways at a terminus).
+  tick?: { line: string; dir: Pt; mdir: Pt; end?: boolean };
+}
+
+const stations: Station[] = [
+  {
+    label: "Boilers & heating",
+    sub: "Repairs, servicing, new boilers",
+    href: "/services/boilers-and-heating",
+    d: [[104, 24]],
+    m: [[38, 58], [44, 58]],
+    side: "ne",
+    mside: "w",
+  },
+  {
+    label: "Emergency plumbing",
+    sub: "Leaks, burst pipes, blocked drains",
+    href: "/services/emergency-plumbing",
+    d: [[80, 48]],
+    m: [[56, 86], [62, 86]],
+    side: "se",
+    mside: "e",
+  },
+  {
+    label: "Renovations",
+    sub: "Kitchens, bathrooms, re-piping",
+    href: "/services/renovations-and-commercial",
+    d: [[60, 72]],
+    m: [[38, 120], [44, 120]],
+    side: "w",
+    mside: "w",
+  },
+  {
+    label: "Commercial & offices",
+    sub: "Offices and corporate premises",
+    href: "/services/renovations-and-commercial",
+    d: [[104, 72], [104, 76]],
+    m: [[50, 146], [62, 146]],
+    side: "s",
+    mside: "e",
+  },
+  {
+    label: "Contact",
+    sub: "Call, email or send a message",
+    href: "/contact",
+    d: [[136, 72], [136, 76]],
+    m: [[50, 176], [62, 176]],
+    side: "s",
+    mside: "e",
+  },
+  {
+    label: "£100 domestic callout",
+    d: [[118, 34]],
+    m: [[56, 104]],
+    side: "s",
+    mside: "e",
+    tick: { line: "cold", dir: [0, 1], mdir: [1, 0] },
+  },
+  {
+    label: "30+ years' experience",
+    d: [[78, 24]],
+    m: [[44, 98]],
+    side: "w",
+    mside: "w",
+    tick: { line: "heat", dir: [0, 1], mdir: [-1, 0], end: true },
+  },
+  {
+    label: "Gas Safe registered",
+    d: [[88, 12]],
+    m: [[38, 48]],
+    side: "w",
+    mside: "w",
+    tick: { line: "gas", dir: [0, 1], mdir: [1, 0], end: true },
+  },
+  {
+    label: "Based in Enfield",
+    d: [[146, 8]],
+    m: [[70, 50]],
+    side: "w",
+    mside: "e",
+    tick: { line: "cold", dir: [1, 0], mdir: [1, 0], end: true },
+  },
+  {
+    label: "Covering all of London",
+    d: [[124, 90]],
+    m: [[38, 160]],
+    side: "e",
+    mside: "w",
+    tick: { line: "waste", dir: [0, 1], mdir: [1, 0], end: true },
+  },
+];
+
+// Polyline to path with rounded corners (quadratic curve through each vertex).
+function roundedPath(pts: Pt[], r: number): string {
+  let d = `M${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [p, c, n] = [pts[i - 1], pts[i], pts[i + 1]];
+    const l1 = Math.hypot(c[0] - p[0], c[1] - p[1]);
+    const l2 = Math.hypot(n[0] - c[0], n[1] - c[1]);
+    const k = Math.min(r, l1 / 2, l2 / 2);
+    const a = [c[0] - ((c[0] - p[0]) / l1) * k, c[1] - ((c[1] - p[1]) / l1) * k];
+    const b = [c[0] + ((n[0] - c[0]) / l2) * k, c[1] + ((n[1] - c[1]) / l2) * k];
+    d += `L${a[0]} ${a[1]}Q${c[0]} ${c[1]} ${b[0]} ${b[1]}`;
+  }
+  const last = pts[pts.length - 1];
+  return `${d}L${last[0]} ${last[1]}`;
+}
+
+// Label anchor: the station point furthest towards the label's side.
+function anchor(pts: Pt[], side: Side): Pt {
+  const v: Pt = [
+    side.includes("e") ? 1 : side.includes("w") ? -1 : 0,
+    side.includes("s") ? 1 : side.includes("n") ? -1 : 0,
+  ];
+  return pts.reduce((a, b) =>
+    b[0] * v[0] + b[1] * v[1] > a[0] * v[0] + a[1] * v[1] ? b : a
+  );
+}
+
+// How a label sits relative to its anchor.
+function place(side: Side): string {
+  const g = "var(--gap)";
+  const x = side.includes("e")
+    ? g
+    : side.includes("w")
+      ? `calc(-100% - ${g})`
+      : "-50%";
+  const y = side.includes("s")
+    ? side.length > 1 ? "0.2em" : g
+    : side.includes("n")
+      ? side.length > 1 ? "calc(-100% - 0.2em)" : `calc(-100% - ${g})`
+      : "-50%";
+  const align = side.includes("e") ? "left" : side.includes("w") ? "right" : "center";
+  return `translate(${x}, ${y});${align}`;
+}
+
+const pct = (v: number, of: number) => `${((v / of) * 100).toFixed(3)}%`;
+
+function stationStyle(s: Station) {
+  const [dx, dy] = anchor(s.d, s.side);
+  const [mx, my] = anchor(s.m, s.mside);
+  const [dt, da] = place(s.side).split(";");
+  const [mt, ma] = place(s.mside).split(";");
+  return `--dx:${pct(dx, D.w)};--dy:${pct(dy, D.h)};--mx:${pct(mx, M.w)};--my:${pct(my - M.y0, M.h)};--dt:${dt};--da:${da};--mt:${mt};--ma:${ma}`;
+}
+
+const layouts = [
+  { cls: "land", box: D, key: "d" as const, sw: 1.3 },
+  { cls: "port", box: M, key: "m" as const, sw: 1.8 },
+];
+---
+
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Nigel Bass • Plumbing & Heating (pipe map concept)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@87.5,400;87.5,600;87.5,700&family=Big+Shoulders+Display:wght@800&display=swap"
+    />
+  </head>
+  <body>
+    <main class="map">
+      <header class="title">
+        <WavyHeading />
+        <p class="intro">
+          Plumbing and heating engineer. Domestic jobs and larger projects,
+          across London.
+        </p>
+        <p class="phone">
+          Call <a href="tel:+442000000000">020 0000 0000</a>
+        </p>
+        <ul class="key" aria-label="Key">
+          {
+            lines.map((ln) => (
+              <li>
+                <span class={`swatch ${ln.id}`} aria-hidden="true" />
+                {ln.name}
+              </li>
+            ))
+          }
+          <li>
+            <span class="swatch fit" aria-hidden="true"></span>
+            Service
+          </li>
+        </ul>
+      </header>
+      <div class="stage">
+        <div class="frame">
+      {
+        layouts.map((L) => (
+          <svg
+            class={`lines ${L.cls}`}
+            viewBox={`0 ${L.box.y0} ${L.box.w} ${L.box.h}`}
+            aria-hidden="true"
+            style={`--sw:${L.sw}`}
+          >
+            {lines.map((ln) => {
+              const d = roundedPath(ln[L.key], L.key === "d" ? 4 : 3);
+              return (
+                <g class={`line ${ln.id}`}>
+                  <path class="pipe" d={d} />
+                  <path class="flow" d={d} />
+                </g>
+              );
+            })}
+            {stations.map((s) => {
+              const pts = s[L.key];
+              if (s.tick) {
+                const [x, y] = pts[0];
+                const [ux, uy] = L.key === "d" ? s.tick.dir : s.tick.mdir;
+                const len = L.sw * 1.3;
+                const back = s.tick.end ? len : 0;
+                return (
+                  <line
+                    class={`tick ${s.tick.line}`}
+                    x1={x - ux * back}
+                    y1={y - uy * back}
+                    x2={x + ux * len}
+                    y2={y + uy * len}
+                  />
+                );
+              }
+              const [a, b] = [pts[0], pts[pts.length - 1]];
+              return (
+                <g class="fitting">
+                  <line class="fit-out" x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} />
+                  <line class="fit-in" x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} />
+                </g>
+              );
+            })}
+          </svg>
+        ))
+      }
+      <nav aria-label="Services and contact">
+        <ul class="stations">
+          {
+            stations.map((s) => (
+              <li
+                class={s.tick ? "stn minor" : "stn"}
+                style={stationStyle(s)}
+              >
+                {s.href ? (
+                  <a href={s.href}>
+                    <span class="name">{s.label}</span>
+                    <span class="sub">{s.sub}</span>
+                  </a>
+                ) : (
+                  <span class="name">{s.label}</span>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --paper: #eef2f3;
+    --ink: #18262e;
+    --ink-soft: #46555e;
+    --heat: #c8462b;
+    --heat-text: #a8361c;
+    --cold: #2f78b7;
+    --gas: #e2a72e;
+    --waste: #7c8a80;
+    color-scheme: light;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    height: 100svh;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    font-stretch: 87.5%;
+  }
+  a {
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 3px solid var(--cold);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* The stage keeps the map's aspect ratio and fits inside one screen. */
+  .map {
+    position: relative;
+    container-type: inline-size;
+    width: min(100vw, 160svh);
+    aspect-ratio: 160 / 100;
+    --fs: clamp(10px, 1.05cqw, 17px);
+    font-size: var(--fs);
+  }
+  .stage,
+  .frame {
+    position: absolute;
+    inset: 0;
+  }
+  .title {
+    z-index: 1;
+  }
+  .lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .lines.port {
+    display: none;
+  }
+  .line path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .pipe {
+    stroke-width: var(--sw);
+  }
+  .heat {
+    stroke: var(--heat);
+    --c: var(--heat);
+  }
+  .cold {
+    stroke: var(--cold);
+    --c: var(--cold);
+  }
+  .gas {
+    stroke: var(--gas);
+    --c: var(--gas);
+  }
+  .waste {
+    stroke: var(--waste);
+    --c: var(--waste);
+  }
+  /* A faint highlight drifting along each pipe. */
+  .flow {
+    stroke: #fff;
+    stroke-width: calc(var(--sw) * 0.28);
+    stroke-dasharray: 1.2 5;
+    opacity: 0.45;
+    animation: flow 6s linear infinite;
+  }
+  .cold .flow {
+    animation-direction: reverse;
+  }
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -6.2;
+    }
+  }
+  .tick {
+    stroke-width: var(--sw);
+    stroke-linecap: butt;
+  }
+  .fitting line {
+    stroke-linecap: round;
+  }
+  .fit-out {
+    stroke: var(--ink);
+    stroke-width: calc(var(--sw) * 2.6);
+  }
+  .fit-in {
+    stroke: #fff;
+    stroke-width: calc(var(--sw) * 1.5);
+  }
+
+  /* Title block, set like a drawing's title panel. */
+  .title {
+    position: absolute;
+    left: 2.5%;
+    top: 4%;
+    width: 33%;
+    padding: 1.4em 1.6em 1.3em;
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+    font-size: var(--fs);
+  }
+  .title .wavy {
+    font-size: 5cqw;
+  }
+  .intro {
+    margin: 0.9em 0 1em;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .key {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(7.5em, 1fr));
+    gap: 0.45em 1em;
+    padding-top: 0.9em;
+    border-top: 1px solid #c9d2d6;
+    font-size: 0.92em;
+  }
+  .key li {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  .swatch {
+    width: 2em;
+    height: 0.5em;
+    border-radius: 1em;
+    background: var(--c);
+  }
+  .swatch.fit {
+    width: 1em;
+    height: 1em;
+    border: 0.22em solid var(--ink);
+    background: #fff;
+  }
+
+  /* Station labels hang off their fitting; side set per layout. */
+  .stn {
+    position: absolute;
+    left: var(--dx);
+    top: var(--dy);
+    --gap: 1.1em;
+    width: max-content;
+    max-width: 16em;
+    line-height: 1.2;
+    transform: var(--dt);
+    text-align: var(--da);
+  }
+  .stn .name {
+    display: block;
+    font-weight: 700;
+    font-size: 1.15em;
+  }
+  .stn .sub {
+    display: block;
+    margin-top: 0.15em;
+    color: var(--ink-soft);
+    font-size: 0.9em;
+  }
+  .stn a {
+    display: block;
+    text-decoration: none;
+    padding: 0.15em 0.3em;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--paper) 85%, transparent);
+  }
+  .stn.minor {
+    --gap: 1.2em;
+  }
+  .stn.minor .name {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: var(--ink-soft);
+  }
+  .stn a:hover .name {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+  }
+  .phone {
+    margin: 0 0 1em;
+    font-weight: 700;
+    font-size: 1.2em;
+  }
+
+  /* Portrait: the same map turned a quarter, title across the top. */
+  /* Portrait: title block on top, a re-drawn vertical map fills the rest. */
+  @media (max-aspect-ratio: 1/1) {
+    .map {
+      width: 100vw;
+      height: 100svh;
+      aspect-ratio: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      --fs: clamp(11px, 3.3cqw, 15px);
+    }
+    .title {
+      position: static;
+      width: auto;
+      padding: 0.8em 1em;
+    }
+    .title .wavy {
+      font-size: 13cqw;
+    }
+    .intro {
+      display: none;
+    }
+    .phone {
+      margin: 0.6em 0 0.7em;
+    }
+    .key {
+      grid-template-columns: repeat(3, auto);
+      justify-content: start;
+      gap: 0.35em 1em;
+    }
+    .stage {
+      position: relative;
+      inset: auto;
+      flex: 1;
+      min-height: 0;
+      container-type: size;
+      display: grid;
+      place-items: center;
+    }
+    .frame {
+      position: relative;
+      inset: auto;
+      width: min(100cqw, 100cqh * 100 / 140);
+      aspect-ratio: 100 / 140;
+    }
+    .lines.land {
+      display: none;
+    }
+    .lines.port {
+      display: block;
+    }
+    .stn {
+      left: var(--mx);
+      top: var(--my);
+      max-width: 8.5em;
+      transform: var(--mt);
+      text-align: var(--ma);
+    }
+    .stn .sub {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow {
+      animation: none;
+    }
+  }
+</style>

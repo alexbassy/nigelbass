@@ -1,0 +1,1015 @@
+---
+// Design prototype: "Pipes & valves". Water and heat run down a riser; each section's valve opens as it scrolls in.
+import WavyHeading from "../../components/design/pipes/WavyHeading.astro";
+
+const phone = "020 0000 0000";
+const tel = "tel:+442000000000";
+const email = "hello@example.com";
+
+const services = [
+  {
+    slug: "emergency-plumbing",
+    title: "Emergency plumbing",
+    text: "Leaks, burst pipes and blocked drains. Turn the water off at the stopcock, then call. Domestic callouts are £100.",
+  },
+  {
+    slug: "boilers-and-heating",
+    title: "Boilers and central heating",
+    text: "Boiler repairs, servicing and replacements. Radiators that stay cold, heating that keeps losing pressure, hot water that won't come through.",
+  },
+  {
+    slug: "renovations-and-commercial",
+    title: "Renovations and commercial",
+    text: "Bathroom and kitchen refits, re-piping, and plumbing and heating for offices and commercial premises. Quoted per job.",
+  },
+];
+---
+
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Nigel Bass • Plumbing & Heating (pipes concept)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Instrument+Sans:wght@400;600&display=swap"
+    />
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="top">
+      <div class="boiler" aria-hidden="true">
+        <svg aria-hidden="true" viewBox="0 0 64 72">
+          <rect x="4" y="2" width="56" height="58" rx="6" class="boiler-case"></rect>
+          <rect x="14" y="12" width="36" height="16" rx="3" class="boiler-screen"></rect>
+          <path class="flame" d="M32 52c-7 0-10-5-8-11 1 3 3 4 4 4-1-5 2-10 6-12-1 4 2 6 4 9 2 3 1 10-6 10z"></path>
+        </svg>
+      </div>
+      <a class="brand" href="/">Nigel Bass</a>
+      <p class="top-meta">Gas Safe registered</p>
+      <a class="top-phone" href={tel}>{phone}</a>
+    </header>
+
+    <main id="main">
+      <section class="run hero is-open" aria-labelledby="hero-title">
+        <div class="riser" aria-hidden="true">
+          <span class="pipe hot"></span><span class="pipe cold"></span>
+        </div>
+        <div class="hero-copy">
+          <div id="hero-title"><WavyHeading /></div>
+          <p class="lede">
+            Gas Safe registered plumber and heating engineer with over 30 years'
+            experience. Based in Enfield, working across all of London.
+          </p>
+          <div class="actions">
+            <a class="btn btn-hot" href={tel}>Call {phone}</a>
+            <a class="btn btn-line" href="/contact">Send a message</a>
+          </div>
+        </div>
+
+        <figure class="radiator" aria-hidden="true">
+          <svg aria-hidden="true" viewBox="0 0 380 330">
+            <defs>
+              <linearGradient id="warm" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#e0522a"></stop>
+                <stop offset="1" stop-color="#f2a06b"></stop>
+              </linearGradient>
+            </defs>
+            <!-- heat rising -->
+            <g class="shimmer">
+              <path d="M130 70c-10-14 10-22 0-36s10-22 0-34"></path>
+              <path d="M190 70c-10-14 10-22 0-36s10-22 0-34"></path>
+              <path d="M250 70c-10-14 10-22 0-36s10-22 0-34"></path>
+            </g>
+            <!-- radiator body -->
+            <g class="rad">
+              {
+                [0, 1, 2, 3, 4, 5, 6, 7].map((n) => (
+                  <rect x={88 + n * 26} y="80" width="22" height="160" rx="11" />
+                ))
+              }
+              <rect x="84" y="92" width="214" height="14" rx="7"></rect>
+              <rect x="84" y="214" width="214" height="14" rx="7"></rect>
+            </g>
+            <rect class="rad-heat" x="88" y="80" width="204" height="160" rx="11"></rect>
+            <!-- feed pipes -->
+            <path class="cu" d="M84 221H54V330"></path>
+            <path class="fluid hot-f" d="M84 221H54V330"></path>
+            <path class="cu" d="M298 221H326V330"></path>
+            <path class="fluid cold-f" d="M326 330V221H298"></path>
+            <!-- lockshield valves -->
+            <rect class="brass" x="70" y="210" width="20" height="22" rx="4"></rect>
+            <rect class="brass" x="292" y="210" width="20" height="22" rx="4"></rect>
+            <!-- pressure gauge -->
+            <g class="gauge" transform="translate(54 290)">
+              <circle r="32" class="gauge-rim"></circle>
+              <circle r="26" class="gauge-face"></circle>
+              <path class="gauge-band" d="M-18 10A20 20 0 0 1 -6 -19"></path>
+              <path class="gauge-band ok" d="M-6 -19A20 20 0 0 1 14 -14"></path>
+              <g class="needle"><path d="M0 0L-3 2L0 -21L3 2Z"></path></g>
+              <circle r="4" class="brass"></circle>
+            </g>
+          </svg>
+        </figure>
+      </section>
+
+      <section class="run intro" data-valve aria-labelledby="intro-title">
+        <div class="riser" aria-hidden="true">
+          <span class="valve"></span>
+          <span class="pipe hot"></span><span class="pipe cold"></span>
+        </div>
+        <div class="intro-grid">
+          <div class="prose">
+            <h2 id="intro-title">Thirty years on the tools</h2>
+            <p>
+              I've been fixing leaks, fitting boilers and running pipework since
+              the early nineties. Most of my work is in people's homes: the
+              burst pipe at seven in the morning, the boiler that gives up in
+              January, the bathroom that needs re-plumbing before the tiler
+              arrives.
+            </p>
+            <p>
+              I'm based in Enfield and cover all of London. You deal with me
+              from the first call to the last fitting.
+            </p>
+          </div>
+          <aside class="plate" aria-label="Callout charge">
+            <p class="plate-price">£100</p>
+            <p class="plate-label">Domestic callout</p>
+            <p class="plate-note">Larger jobs are quoted up front, per job.</p>
+            <span class="screw s1"></span><span class="screw s2"></span>
+            <span class="screw s3"></span><span class="screw s4"></span>
+          </aside>
+        </div>
+      </section>
+
+      <section class="run services" data-valve aria-labelledby="services-title">
+        <div class="riser" aria-hidden="true">
+          <span class="valve"></span>
+          <span class="pipe hot"></span><span class="pipe cold"></span>
+        </div>
+        <h2 id="services-title">What I do</h2>
+        <div class="manifold" aria-hidden="true"><span class="pipe hot h"></span></div>
+        <ul class="outlets">
+          {
+            services.map((s) => (
+              <li class="outlet">
+                <span class="drop" aria-hidden="true">
+                  <span class="pipe hot" />
+                </span>
+                <h3>
+                  <a href={`/services/${s.slug}`}>{s.title}</a>
+                </h3>
+                <p>{s.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="run plant" data-valve aria-labelledby="plant-title">
+        <div class="riser" aria-hidden="true">
+          <span class="valve"></span>
+          <span class="pipe hot"></span><span class="pipe cold"></span>
+        </div>
+        <div class="plant-grid">
+          <div class="prose">
+            <h2 id="plant-title">Bigger jobs, planned properly</h2>
+            <p>
+              Alongside domestic callouts I take on larger projects: full
+              renovations, office fit-outs and plumbing and heating for
+              corporate premises. I work to your programme, alongside your
+              builders or facilities team, and keep disruption to a minimum.
+            </p>
+            <p>Every larger job is quoted individually.</p>
+            <a class="btn btn-cold" href="/services/renovations-and-commercial"
+              >About renovations and commercial work</a
+            >
+          </div>
+          <ul class="spec">
+            <li>Home renovations, kitchens and bathrooms</li>
+            <li>Office and workplace plumbing</li>
+            <li>Heating systems for commercial buildings</li>
+            <li>Gas Safe registered for gas work</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="run contact" data-valve aria-labelledby="contact-title">
+        <div class="riser end" aria-hidden="true">
+          <span class="valve"></span>
+          <span class="pipe hot"></span><span class="pipe cold"></span>
+        </div>
+        <div class="tap" aria-hidden="true">
+          <svg aria-hidden="true" viewBox="0 0 160 160">
+            <path class="cu" d="M0 60H96V96"></path>
+            <path class="fluid cold-f" d="M0 60H96V96"></path>
+            <rect class="brass" x="80" y="40" width="32" height="34" rx="6"></rect>
+            <g class="wheel">
+              <circle cx="96" cy="26" r="22" class="wheel-rim"></circle>
+              <path class="wheel-spoke" d="M96 4V48M74 26H118"></path>
+              <circle cx="96" cy="26" r="6" class="brass"></circle>
+            </g>
+            <path class="drip" d="M96 104c-4 6-6 9-6 12a6 6 0 0 0 12 0c0-3-2-6-6-12z"></path>
+          </svg>
+        </div>
+        <div class="contact-copy">
+          <h2 id="contact-title">Got a leak, or a job in mind?</h2>
+          <p>
+            Call or send a message with what's wrong and where you are. If it's
+            an emergency, ring.
+          </p>
+          <div class="actions">
+            <a class="btn btn-hot" href={tel}>Call {phone}</a>
+            <a class="btn btn-line" href="/contact">Send a message</a>
+          </div>
+          <p class="small">Or email <a href={`mailto:${email}`}>{email}</a></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>Nigel Bass, plumbing and heating engineer. Enfield, covering all of London.</p>
+      <p>Gas Safe registered. Registration number to follow.</p>
+    </footer>
+
+    <script is:inline>
+      // Open each section's valve once it scrolls into view.
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add("is-open");
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { threshold: 0.2 }
+      );
+      for (const el of document.querySelectorAll("[data-valve]")) io.observe(el);
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --enamel: #e8edf0;
+    --paper: #f7f9fa;
+    --ink: #172630;
+    --ink-soft: #3d4f5b;
+    --copper: #b8703a;
+    --brass: #c9a13b;
+    --water: #2a7fd4;
+    --water-text: #165a9e;
+    --heat: #e0522a;
+    --heat-text: #b8380f;
+    --plant: #1c3340;
+    --gutter: 96px;
+    --pw: 16px;
+    --hot-x: 26px;
+    --cold-x: 56px;
+    color-scheme: light;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background: var(--enamel);
+    color: var(--ink);
+    font: 400 1.0625rem/1.6 "Instrument Sans", system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+  a {
+    color: var(--water-text);
+    text-underline-offset: 0.18em;
+  }
+  :focus-visible {
+    outline: 3px solid var(--water);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  h2,
+  h3 {
+    font-family: "Big Shoulders Display", "Arial Narrow", sans-serif;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0 0 0.5em;
+  }
+  h2 {
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+  }
+  h3 {
+    font-size: 1.85rem;
+  }
+  p {
+    margin: 0 0 1em;
+  }
+  .skip {
+    position: absolute;
+    left: -999px;
+  }
+  .skip:focus {
+    left: 1rem;
+    top: 1rem;
+    z-index: 10;
+    background: var(--paper);
+    padding: 0.5rem 1rem;
+  }
+
+  /* Header: the boiler sits at the top of the riser. */
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1rem clamp(1rem, 4vw, 3rem) 0 0;
+  }
+  .boiler {
+    width: var(--gutter);
+    flex: none;
+    display: grid;
+    place-items: center;
+  }
+  .boiler svg {
+    width: 60px;
+  }
+  .boiler-case {
+    fill: var(--paper);
+    stroke: #9aa9b3;
+    stroke-width: 2;
+  }
+  .boiler-screen {
+    fill: var(--plant);
+  }
+  .flame {
+    fill: var(--heat);
+    transform-origin: 32px 52px;
+    animation: flicker 1.6s ease-in-out infinite alternate;
+  }
+  @keyframes flicker {
+    to {
+      transform: scale(0.9, 1.08);
+    }
+  }
+  .brand {
+    font: 800 1.6rem/1 "Big Shoulders Display", sans-serif;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .top-meta {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .top-phone {
+    margin-left: auto;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  /* Each section is a length of pipe run: riser in the left gutter, content to its right. */
+  .run {
+    position: relative;
+    padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem) clamp(3rem, 8vw, 6rem)
+      var(--gutter);
+  }
+  .riser {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--gutter);
+  }
+  .riser.end {
+    bottom: 50%;
+  }
+  .pipe {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--pw);
+    border-radius: var(--pw);
+    background: linear-gradient(
+      90deg,
+      #6d3a19,
+      #c27c46 30%,
+      #f1c49b 48%,
+      #b8703a 70%,
+      #5e3215
+    );
+    overflow: hidden;
+  }
+  .pipe.hot {
+    left: var(--hot-x);
+    --fluid: var(--heat);
+  }
+  .pipe.cold {
+    left: var(--cold-x);
+    --fluid: var(--water);
+  }
+  /* The flow: a channel of moving fluid down the centre of the pipe. */
+  .pipe::after {
+    content: "";
+    position: absolute;
+    inset: 0 30%;
+    border-radius: 4px;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--fluid) 0 16px,
+      color-mix(in srgb, var(--fluid) 45%, transparent) 16px 30px
+    );
+    background-size: 100% 30px;
+    animation: flow-down 0.8s linear infinite paused;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 1.6s ease-in 0.7s;
+  }
+  .pipe.cold::after {
+    animation-name: flow-up;
+  }
+  .is-open .pipe::after {
+    transform: scaleY(1);
+    animation-play-state: running;
+  }
+  .hero .pipe::after {
+    transition-delay: 0.3s;
+  }
+  @keyframes flow-down {
+    to {
+      background-position: 0 30px;
+    }
+  }
+  @keyframes flow-up {
+    to {
+      background-position: 0 -30px;
+    }
+  }
+  /* Horizontal manifold pipe. */
+  .pipe.h {
+    top: 0;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: var(--pw);
+    background: linear-gradient(
+      180deg,
+      #6d3a19,
+      #c27c46 30%,
+      #f1c49b 48%,
+      #b8703a 70%,
+      #5e3215
+    );
+  }
+  .pipe.h::after {
+    inset: 30% 0;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--fluid) 0 16px,
+      color-mix(in srgb, var(--fluid) 45%, transparent) 16px 30px
+    );
+    background-size: 30px 100%;
+    animation-name: flow-right;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition-delay: 1.4s;
+  }
+  .is-open .pipe.h::after {
+    transform: scaleX(1);
+  }
+  @keyframes flow-right {
+    to {
+      background-position: 30px 0;
+    }
+  }
+
+  /* Valve: a handwheel straddling both pipes, turned a quarter and a half when the section opens. */
+  .valve {
+    position: absolute;
+    z-index: 2;
+    top: -22px;
+    left: calc(var(--hot-x) - 6px);
+    width: calc(var(--cold-x) - var(--hot-x) + var(--pw) + 12px);
+    height: 44px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #e6c66a, var(--brass) 45%, #8f6f1e);
+    box-shadow: 0 2px 0 #7a5d16;
+  }
+  .valve::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border-radius: 50%;
+    border: 5px solid var(--heat-text);
+    background:
+      linear-gradient(var(--heat-text), var(--heat-text)) center / 5px 100%
+        no-repeat,
+      linear-gradient(var(--heat-text), var(--heat-text)) center / 100% 5px
+        no-repeat;
+    transition: transform 0.9s cubic-bezier(0.5, 0, 0.2, 1);
+  }
+  .is-open .valve::before {
+    transform: rotate(-270deg);
+  }
+  .valve::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
+    border-radius: 50%;
+    background: var(--brass);
+  }
+
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 2rem;
+    padding-top: clamp(2rem, 6vw, 4rem);
+  }
+  .lede {
+    max-width: 34rem;
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .btn {
+    display: inline-block;
+    padding: 0.8rem 1.3rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid transparent;
+  }
+  .btn-hot {
+    background: var(--heat-text);
+    color: #fff;
+  }
+  .btn-hot:hover {
+    background: #9a2e0b;
+  }
+  .btn-cold {
+    background: var(--water-text);
+    color: #fff;
+  }
+  .btn-cold:hover {
+    background: #0f4a85;
+  }
+  .btn-line {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .btn-line:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .radiator {
+    margin: 0 0 calc(clamp(3rem, 8vw, 6rem) * -1);
+    align-self: end;
+  }
+  .radiator svg {
+    display: block;
+    width: 100%;
+    max-width: 440px;
+    margin-left: auto;
+  }
+  .rad rect {
+    fill: var(--paper);
+    stroke: #9aa9b3;
+    stroke-width: 2;
+  }
+  .rad-heat {
+    fill: url(#warm);
+    mix-blend-mode: multiply;
+    opacity: 0;
+    animation: warm-up 3s ease-in 0.8s forwards;
+  }
+  @keyframes warm-up {
+    to {
+      opacity: 0.35;
+    }
+  }
+  .shimmer path {
+    fill: none;
+    stroke: var(--heat);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 8 10;
+    opacity: 0.5;
+    animation: rise 1.4s linear infinite;
+  }
+  .shimmer path:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .shimmer path:nth-child(3) {
+    animation-delay: -1s;
+  }
+  @keyframes rise {
+    to {
+      stroke-dashoffset: 18;
+    }
+  }
+  .cu {
+    fill: none;
+    stroke: var(--copper);
+    stroke-width: 14;
+    stroke-linejoin: round;
+  }
+  .fluid {
+    fill: none;
+    stroke-width: 5;
+    stroke-dasharray: 12 10;
+    animation: dash 0.8s linear infinite;
+  }
+  .hot-f {
+    stroke: var(--heat);
+  }
+  .cold-f {
+    stroke: var(--water);
+  }
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -22;
+    }
+  }
+  .brass {
+    fill: var(--brass);
+  }
+  .gauge-rim {
+    fill: var(--brass);
+  }
+  .gauge-face {
+    fill: var(--paper);
+  }
+  .gauge-band {
+    fill: none;
+    stroke: #c7d0d6;
+    stroke-width: 5;
+  }
+  .gauge-band.ok {
+    stroke: #3e9a5a;
+  }
+  .needle {
+    fill: var(--heat-text);
+    transform: rotate(-120deg);
+    animation: pressure 2.4s cubic-bezier(0.3, 1.4, 0.5, 1) 0.6s forwards;
+  }
+  @keyframes pressure {
+    to {
+      transform: rotate(18deg);
+    }
+  }
+
+  /* Intro */
+  .intro-grid,
+  .plant-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+    max-width: 68rem;
+  }
+  .prose {
+    max-width: 38rem;
+  }
+  .plate {
+    position: relative;
+    padding: 2rem 2rem 1.5rem;
+    border-radius: 10px;
+    background: linear-gradient(160deg, #e9cf7f, var(--brass) 55%, #a9842a);
+    color: #2a2006;
+    box-shadow:
+      inset 0 1px 0 #f6e3a6,
+      0 3px 0 #7a5d16;
+  }
+  .plate-price {
+    margin: 0;
+    font: 800 5rem/0.9 "Big Shoulders Display", sans-serif;
+  }
+  .plate-label {
+    margin: 0.25rem 0 0.75rem;
+    font-weight: 600;
+    font-size: 1.2rem;
+  }
+  .plate-note {
+    margin: 0;
+  }
+  .screw {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background:
+      linear-gradient(45deg, transparent 42%, #6b5212 42% 58%, transparent 58%),
+      #d9bc62;
+  }
+  .s1 {
+    top: 10px;
+    left: 10px;
+  }
+  .s2 {
+    top: 10px;
+    right: 10px;
+  }
+  .s3 {
+    bottom: 10px;
+    left: 10px;
+  }
+  .s4 {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  /* Services: a manifold branches off the riser and drops into each outlet. */
+  .services {
+    background: var(--paper);
+  }
+  .manifold {
+    position: relative;
+    height: var(--pw);
+    margin: 2rem 0 0 calc(var(--hot-x) - var(--gutter));
+  }
+  .outlets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+  .drop {
+    position: relative;
+    display: block;
+    height: 48px;
+    margin-bottom: 1.25rem;
+  }
+  .drop .pipe {
+    left: 0;
+    top: -2px;
+  }
+  .drop .pipe::after {
+    transition-delay: 2.4s;
+    transition-duration: 0.6s;
+  }
+  .drop::after {
+    content: "";
+    position: absolute;
+    left: -6px;
+    bottom: -6px;
+    width: calc(var(--pw) + 12px);
+    height: 12px;
+    border-radius: 3px;
+    background: var(--brass);
+  }
+  .outlet h3 a {
+    color: var(--ink);
+    text-decoration-color: var(--heat);
+    text-decoration-thickness: 3px;
+  }
+  .outlet h3 a:hover {
+    color: var(--heat-text);
+  }
+  .outlet p {
+    color: var(--ink-soft);
+    max-width: 30rem;
+  }
+
+  /* Plant room: larger projects. */
+  .plant {
+    background: var(--plant);
+    color: #e5ecef;
+  }
+  .plant a:not(.btn) {
+    color: #9cc8f2;
+  }
+  .plant .btn-cold {
+    background: var(--water);
+    color: #04172b;
+  }
+  .plant .btn-cold:hover {
+    background: #64a8eb;
+  }
+  .spec {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 4px solid var(--water);
+  }
+  .spec li {
+    padding: 0.7rem 0 0.7rem 1.25rem;
+    border-bottom: 1px solid #2f4b5a;
+  }
+  .spec li:last-child {
+    border-bottom: 0;
+  }
+
+  /* Contact: the run ends at a tap. */
+  .contact {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+  .tap {
+    width: clamp(110px, 18vw, 180px);
+    margin-left: calc(var(--cold-x) - var(--gutter));
+  }
+  .tap svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+  .tap .fluid {
+    animation-play-state: paused;
+  }
+  .is-open .tap .fluid {
+    animation-play-state: running;
+  }
+  .wheel {
+    transform-origin: 96px 26px;
+    transition: transform 0.9s cubic-bezier(0.5, 0, 0.2, 1);
+  }
+  .contact:has(.btn:hover, .btn:focus-visible) .wheel {
+    transform: rotate(-180deg);
+  }
+  .wheel-rim {
+    fill: none;
+    stroke: var(--water-text);
+    stroke-width: 6;
+  }
+  .wheel-spoke {
+    stroke: var(--water-text);
+    stroke-width: 5;
+  }
+  .drip {
+    fill: var(--water);
+    opacity: 0;
+  }
+  .is-open .drip {
+    animation: drip 2.2s ease-in 1.5s infinite;
+  }
+  @keyframes drip {
+    0% {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    20% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(46px);
+    }
+  }
+  .contact-copy {
+    max-width: 36rem;
+  }
+  .small {
+    margin-top: 1.25rem;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .foot {
+    padding: 2rem clamp(1rem, 4vw, 3rem) 2.5rem var(--gutter);
+    border-top: 1px solid #c8d2d8;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .foot p {
+    margin: 0 0 0.25rem;
+  }
+
+  /* Without JS every valve is already open. */
+  html:not(.js) .run .pipe::after {
+    transform: none;
+    animation-play-state: running;
+  }
+
+  @media (max-width: 900px) {
+    .hero,
+    .intro-grid,
+    .plant-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .radiator svg {
+      max-width: 300px;
+      margin: 0;
+    }
+    .outlets {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .outlet {
+      display: grid;
+      grid-template-columns: var(--pw) minmax(0, 1fr);
+      column-gap: 1.25rem;
+    }
+    .outlet .drop {
+      grid-row: 1 / span 2;
+      height: auto;
+      margin: 0;
+    }
+    .outlet .drop .pipe {
+      bottom: 0.5rem;
+    }
+    .outlet h3,
+    .outlet p {
+      grid-column: 2;
+    }
+    .drop::after {
+      display: none;
+    }
+    .manifold {
+      margin-bottom: 0;
+    }
+  }
+  @media (max-width: 600px) {
+    :root {
+      --gutter: 52px;
+      --pw: 10px;
+      --hot-x: 12px;
+      --cold-x: 30px;
+    }
+    .top {
+      flex-wrap: wrap;
+      gap: 0.25rem 0.75rem;
+    }
+    .boiler svg {
+      width: 38px;
+    }
+    .top-meta {
+      display: none;
+    }
+    .valve {
+      top: -16px;
+      height: 32px;
+    }
+    .valve::before {
+      width: 28px;
+      height: 28px;
+      margin: -14px 0 0 -14px;
+      border-width: 4px;
+    }
+    .contact {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .riser.end {
+      bottom: auto;
+      height: 5rem;
+    }
+    .tap {
+      width: 110px;
+    }
+    .plate-price {
+      font-size: 4rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+    .pipe::after,
+    .pipe.h::after {
+      transform: none !important;
+    }
+    .rad-heat {
+      opacity: 0.35;
+    }
+    .needle {
+      transform: rotate(18deg);
+    }
+    .valve::before {
+      transform: rotate(-270deg);
+    }
+  }
+</style>
